@@ -16,11 +16,11 @@ Uncomment the GetRegResults() command and run the program
 Results:
 
 Classification:
-Accuracy = 96.83%
+Accuracy = 97%-98%
 
 Regression:
-Accuracy = 69.16%
-Accuracy = 4164/6028
+Accuracy = 77.14%
+Accuracy = 4650/6028
 
 
 

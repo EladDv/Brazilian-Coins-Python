@@ -25,7 +25,7 @@ def CreateCNN():
     model = keras.models.Sequential()
     
     # First Cluster
-    model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(128, 128, 3) ) )
+    model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(100, 100, 3) ) )
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -38,11 +38,9 @@ def CreateCNN():
     model.add(Conv2D(256, (3, 3), activation='relu'))
     
     model.add(Flatten())
-    model.add(Dense(256, activation='relu'))
+    model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.25))
     model.add(Dense(128, activation='tanh'))
-    model.add(Dropout(0.25))
-    model.add(Dense(64, activation='tanh'))
     model.add(Dropout(0.25))
     model.add(Dense(5, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
@@ -50,6 +48,7 @@ def CreateCNN():
               metrics=[metrics.categorical_accuracy])
     model.summary()
     return model
+  
   
 def createSegmentedClassImages():
     print('Generating classification ready images')
@@ -75,7 +74,7 @@ def createClassDataset():
         createSegmentedClassImages()
     print('Creating dataset for classification')
     SegmentedImages = os.listdir(os.getcwd()+'/ClassificationData')
-    Dataset = np.zeros((len(SegmentedImages),128,128,3),dtype = np.uint8)
+    Dataset = np.zeros((len(SegmentedImages),100,100,3),dtype = np.uint8)
     Labels = np.zeros((len(SegmentedImages),5), dtype = np.uint8)
     random.shuffle(SegmentedImages)
     
@@ -128,13 +127,15 @@ def GetRegResults(saved_weights = ''):
     savingCounter = 0
     for i,path in enumerate(RegImages):
         temp_data = FeatureDetection.SegmentImage('all_reg/' + path)
-        data = np.zeros((temp_data.shape[0],1,128,128,3))
+        data = np.zeros((temp_data.shape[0],1,100,100,3))
         data[:,0,:,:,:]= temp_data[:,:,:,:]
         test_y = int(path.split('_')[0])
         sum = 0
         savedPreds = np.zeros((data.shape[0])).astype(int)
+        savedPredW = np.zeros((data.shape[0],5))
         for k in range(data.shape[0]):
             predicted = model.predict(data[k], batch_size = 1)
+            savedPredW[k] = predicted
             predicted = predicted.argmax()
             sum = sum + GetCoinValue(predicted)
             savedPreds[k] = GetCoinValue(predicted)
@@ -143,8 +144,16 @@ def GetRegResults(saved_weights = ''):
         if(FinalData[i][0] == FinalData[i][1]):
             AccuracyCounter = AccuracyCounter + 1
             #for k,image in enumerate(temp_data):
-            #    plt.imsave('reg_data/'+str(savedPreds[k]) +'_a'+str(savingCounter)+'.jpg',image)
+            #    plt.imsave('ClassificationData/'+str(savedPreds[k]) +'_a'+str(savingCounter)+'.jpg',image)
             #    savingCounter = savingCounter + 1
+       # else:
+       #     print(path +' is :')
+       #     print(savedPredW)
+       #     print(str(sum)+ ','+ str(test_y))
+       #     print()
+
+       # else:
+            #FeatureDetection.SaveSegmentedImage('/all_reg',path,'Pred_'+str(sum)+'_', savedPreds)
         if((i+1)%200 == 0 or i+1 == len(RegImages)):
             print()
             print('Accuracy = ' + str(100*AccuracyCounter/(i+1))+'%')
@@ -153,20 +162,23 @@ def GetRegResults(saved_weights = ''):
         np.save('Results.npy',FinalData)
 
 def RunClassifier(saved_weights = ''):
-    createSegmentedClassImages()
-    train_x,train_y,test_x,test_y = createClassDataset()
-    filepath="coins-weights-improvement-New.h5"
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-    callbacks_list = [checkpoint]
-    model = CreateCNN()
-    if(not saved_weights == ''):
-        model.load_weights(saved_weights)
-    model.fit(train_x, train_y, epochs=30, batch_size=96, callbacks=callbacks_list)
-    model.save_weights("coins-weights-improvement-Last.h5")
-    scores = model.evaluate(test_x, test_y)
-    print("Accuracy: %.2f%%" % (scores[1]*100))
-    GetRegResults()
+    import tensorflow as tf
+    with tf.device('/gpu:0'):
+        createSegmentedClassImages()
+        train_x,train_y,test_x,test_y = createClassDataset()
+        filepath="coins-weights-improvement-New.h5"
+        checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+        callbacks_list = [checkpoint]
+        model = CreateCNN()
+        if(not saved_weights == ''):
+            model.load_weights(saved_weights)
+        model.fit(train_x, train_y, epochs=3, batch_size=64, callbacks=callbacks_list)
+        model.save_weights("coins-weights-improvement-Last.h5")
+        scores = model.evaluate(test_x, test_y)
+        print("Accuracy: %.2f%%" % (scores[1]*100))
 
 
 #CreateCNN()
-RunClassifier()
+#RunClassifier() #Untrained model - will create its own dataset from examples
+RunClassifier('coins-weights-improvement-New.h5')#Trained Model
+GetRegResults()

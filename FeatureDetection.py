@@ -11,9 +11,10 @@ import random
 import numpy as np
 from scipy import ndimage as image
 import matplotlib.pyplot as plt
-import matplotlib.colors
 from skimage.feature import peak_local_max
 from skimage.morphology import watershed
+from scipy.misc import imresize
+
 import skimage
 
 def rgb2gray(rgb):
@@ -60,16 +61,24 @@ def prepareImage(img,cimg,returnMaxDims = False):
     labels = watershed(-distance, markers, mask=fill)
     label_image = skimage.measure.label(labels)
     #print(np.unique(labels))
-    TempCoins = np.zeros((len(np.unique(labels)) , 128 , 128, 3)).astype(np.uint8)
+    TempCoins = np.zeros((len(np.unique(labels)) , 100 , 100, 3)).astype(np.uint8)
     counter = 0
     for region in skimage.measure.regionprops(label_image):
         xLen = np.abs(-min(region.coords[:,0])+max(region.coords[:,0]))
         yLen = np.abs(-min(region.coords[:,1])+max(region.coords[:,1]))
-        if(region.area >= 900 and xLen<=128 and yLen<=128 and xLen/yLen < 2 and xLen/yLen > 1/2 ):
-             mySlice = (slice(min(region.coords[:,0]) , max(region.coords[:,0]) ),
-                        slice(min(region.coords[:,1]) , max(region.coords[:,1]) ) )
-             TempCoins[counter, int((128-xLen)/2) : int((128-xLen)/2) + xLen 
-                         , int((128-yLen)/2): int((128-yLen)/2) + yLen,:] = BrightImg[mySlice]
+        if(region.area >= 900 and xLen<=100 and yLen<=100 and xLen/yLen < 2 and xLen/yLen > 1/2 ):
+             #mySlice = (slice(min(region.coords[:,0]) , max(region.coords[:,0]) ),
+             #           slice(min(region.coords[:,1]) , max(region.coords[:,1]) ) )
+             #TempCoins[counter, int((100-xLen)/2) : int((100-xLen)/2) + xLen 
+             #            , int((100-yLen)/2): int((100-yLen)/2) + yLen,:] = BrightImg[mySlice]
+             if(xLen > yLen):
+                 currentImg = BrightImg[min(region.coords[:,0]) : max(region.coords[:,0]),
+                            min(region.coords[:,1]):(min(region.coords[:,1])+xLen)]
+             else:
+                 currentImg = BrightImg[min(region.coords[:,0]):(min(region.coords[:,0])+yLen),
+                           min(region.coords[:,1]) : max(region.coords[:,1])]
+                            
+             TempCoins[counter] = imresize(currentImg, size = (100,100), interp  = 'bicubic')
              #fig= plt.figure()             
              #plt.imshow(TempCoins[counter])
              counter = counter + 1
@@ -86,21 +95,27 @@ def prepareImage(img,cimg,returnMaxDims = False):
     fig = plt.figure()
     plt.imshow(labels,cmap = plt.get_cmap('jet'))
     '''
-    if returnMaxDims:
-	    return maxDims
+    #if returnMaxDims:
+	#    return maxDims
     return Coins
 
 
 
-def SaveSegmentedImage(libPath,path, addition = ''):
+def SaveSegmentedImage(libPath,path, addition = '', labels = []):
+    from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
+	
     Images = SegmentImage(os.getcwd()+libPath+'/'+path)
     fig, ax = plt.subplots(4, 5)
     ax = ax.ravel()
     ax[0].imshow(image.imread(os.getcwd()+libPath+'/'+path))
     for i,im in enumerate(Images):
         ax[i+1].imshow(im)
+        if(i < len(labels)):
+            at = AnchoredText(str(labels[i]),prop=dict(size=8), frameon=True,loc=2)
+            at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
+            ax[i+1].add_artist(at)
     plt.close("all")
-    fig.savefig(os.getcwd()+'/reg_data/'+addition+path)    
+    fig.savefig(os.getcwd()+'/WrongRegData/'+addition+path)    
 
 def SegmentAllImages(libPath):
     RegImages = os.listdir(os.getcwd()+libPath)
@@ -109,7 +124,7 @@ def SegmentAllImages(libPath):
         SaveSegmentedImage(libPath,path)
 
 def SegmentImage(imPath):
-    img = image.imread(imPath, mode = 'L')
+    #img = image.imread(imPath, mode = 'L')
     cimg = image.imread(imPath)
     img2 = prepareImage(cimg,cimg)
     return img2
