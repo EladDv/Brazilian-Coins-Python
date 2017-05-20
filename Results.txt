@@ -1,0 +1,254 @@
+(NN) ubuntu@ip-172-31-18-177:~$ python3 CoinRecognition6.py
+Using TensorFlow backend.
+Generating classification ready images
+Creating dataset for classification
+(7882, 128, 128, 3)
+Done!
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv2d_1 (Conv2D)            (None, 126, 126, 64)      1792
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 63, 63, 64)        0
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 63, 63, 64)        36928
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 (None, 31, 31, 64)        0
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 31, 31, 64)        36928
+_________________________________________________________________
+max_pooling2d_3 (MaxPooling2 (None, 15, 15, 64)        0
+_________________________________________________________________
+conv2d_4 (Conv2D)            (None, 15, 15, 64)        36928
+_________________________________________________________________
+max_pooling2d_4 (MaxPooling2 (None, 7, 7, 64)          0
+_________________________________________________________________
+conv2d_5 (Conv2D)            (None, 7, 7, 64)          36928
+_________________________________________________________________
+max_pooling2d_5 (MaxPooling2 (None, 3, 3, 64)          0
+_________________________________________________________________
+conv2d_6 (Conv2D)            (None, 1, 1, 256)         147712
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 256)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 256)               65792
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 256)               0
+_________________________________________________________________
+dense_2 (Dense)              (None, 128)               32896
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 128)               0
+_________________________________________________________________
+dense_3 (Dense)              (None, 64)                8256
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 64)                0
+_________________________________________________________________
+dense_4 (Dense)              (None, 5)                 325
+=================================================================
+Total params: 404,485.0
+Trainable params: 404,485.0
+Non-trainable params: 0.0
+_________________________________________________________________
+2017-05-19 23:54:54.621692: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-05-19 23:54:54.621737: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-05-19 23:54:54.621749: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-05-19 23:54:54.621763: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-05-19 23:54:54.621777: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+2017-05-19 23:54:55.052318: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2017-05-19 23:54:55.052810: I tensorflow/core/common_runtime/gpu/gpu_device.cc:887] Found device 0 with properties:
+name: Tesla K80
+major: 3 minor: 7 memoryClockRate (GHz) 0.8235
+pciBusID 0000:00:1e.0
+Total memory: 11.17GiB
+Free memory: 11.11GiB
+2017-05-19 23:54:55.052843: I tensorflow/core/common_runtime/gpu/gpu_device.cc:908] DMA: 0
+2017-05-19 23:54:55.052854: I tensorflow/core/common_runtime/gpu/gpu_device.cc:918] 0:   Y
+2017-05-19 23:54:55.052863: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla K80, pci bus id: 0000:00:1e.0)
+Epoch 1/30
+6240/6305 [============================>.] - ETA: 0s - loss: 1.3093 - categorical_accuracy: 0.4348Epoch 00000: loss improved from inf to 1.30749, saving model to coins-weights-i6305/6305 [==============================] - 19s - loss: 1.3075 - categorical_accuracy: 0.4352
+Epoch 2/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.6724 - categorical_accuracy: 0.7397Epoch 00001: loss improved from 1.30749 to 0.67105, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.6711 - categorical_accuracy: 0.7408
+Epoch 3/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.2807 - categorical_accuracy: 0.9096Epoch 00002: loss improved from 0.67105 to 0.28272, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.2827 - categorical_accuracy: 0.9094
+Epoch 4/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.2177 - categorical_accuracy: 0.9345Epoch 00003: loss improved from 0.28272 to 0.21738, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.2174 - categorical_accuracy: 0.9345
+Epoch 5/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1727 - categorical_accuracy: 0.9498Epoch 00004: loss improved from 0.21738 to 0.17343, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1734 - categorical_accuracy: 0.9497
+Epoch 6/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1736 - categorical_accuracy: 0.9476Epoch 00005: loss improved from 0.17343 to 0.17265, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1727 - categorical_accuracy: 0.9480
+Epoch 7/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1540 - categorical_accuracy: 0.9553Epoch 00006: loss improved from 0.17265 to 0.15376, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1538 - categorical_accuracy: 0.9554
+Epoch 8/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1428 - categorical_accuracy: 0.9575Epoch 00007: loss improved from 0.15376 to 0.14324, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1432 - categorical_accuracy: 0.9572
+Epoch 9/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1404 - categorical_accuracy: 0.9583Epoch 00008: loss improved from 0.14324 to 0.13991, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1399 - categorical_accuracy: 0.9584
+Epoch 10/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1180 - categorical_accuracy: 0.9659Epoch 00009: loss improved from 0.13991 to 0.11744, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1174 - categorical_accuracy: 0.9659
+Epoch 11/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1110 - categorical_accuracy: 0.9688Epoch 00010: loss improved from 0.11744 to 0.11190, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1119 - categorical_accuracy: 0.9686
+Epoch 12/30
+6305/6305 [==============================] - 17s - loss: 0.1133 - categorical_accuracy: 0.9681    Epoch 00011: loss did not improve
+Epoch 13/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.1007 - categorical_accuracy: 0.9694Epoch 00012: loss improved from 0.11190 to 0.10153, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.1015 - categorical_accuracy: 0.9692
+Epoch 14/30
+6305/6305 [==============================] - 17s - loss: 0.1048 - categorical_accuracy: 0.9708    Epoch 00013: loss did not improve
+Epoch 15/30
+6305/6305 [==============================] - 17s - loss: 0.1075 - categorical_accuracy: 0.9689    Epoch 00014: loss did not improve
+Epoch 16/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0853 - categorical_accuracy: 0.9785Epoch 00015: loss improved from 0.10153 to 0.08583, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0858 - categorical_accuracy: 0.9781
+Epoch 17/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0812 - categorical_accuracy: 0.9761Epoch 00016: loss improved from 0.08583 to 0.08067, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0807 - categorical_accuracy: 0.9764
+Epoch 18/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0738 - categorical_accuracy: 0.9774Epoch 00017: loss improved from 0.08067 to 0.07454, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0745 - categorical_accuracy: 0.9773
+Epoch 19/30
+6305/6305 [==============================] - 17s - loss: 0.0840 - categorical_accuracy: 0.9748    Epoch 00018: loss did not improve
+Epoch 20/30
+6305/6305 [==============================] - 17s - loss: 0.0809 - categorical_accuracy: 0.9756    Epoch 00019: loss did not improve
+Epoch 21/30
+6305/6305 [==============================] - 17s - loss: 0.1040 - categorical_accuracy: 0.9699    Epoch 00020: loss did not improve
+Epoch 22/30
+6305/6305 [==============================] - 17s - loss: 0.0812 - categorical_accuracy: 0.9767    Epoch 00021: loss did not improve
+Epoch 23/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0722 - categorical_accuracy: 0.9784Epoch 00022: loss improved from 0.07454 to 0.07212, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0721 - categorical_accuracy: 0.9783
+Epoch 24/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0690 - categorical_accuracy: 0.9795Epoch 00023: loss improved from 0.07212 to 0.06908, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0691 - categorical_accuracy: 0.9795
+Epoch 25/30
+6305/6305 [==============================] - 17s - loss: 0.0737 - categorical_accuracy: 0.9792    Epoch 00024: loss did not improve
+Epoch 26/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0630 - categorical_accuracy: 0.9817Epoch 00025: loss improved from 0.06908 to 0.06290, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0629 - categorical_accuracy: 0.9818
+Epoch 27/30
+6240/6305 [============================>.] - ETA: 0s - loss: 0.0477 - categorical_accuracy: 0.9856Epoch 00026: loss improved from 0.06290 to 0.04837, saving model to coins-weigh6305/6305 [==============================] - 17s - loss: 0.0484 - categorical_accuracy: 0.9852
+Epoch 28/30
+6305/6305 [==============================] - 17s - loss: 0.0532 - categorical_accuracy: 0.9835    Epoch 00027: loss did not improve
+Epoch 29/30
+6305/6305 [==============================] - 17s - loss: 0.0563 - categorical_accuracy: 0.9832    Epoch 00028: loss did not improve
+Epoch 30/30
+6305/6305 [==============================] - 17s - loss: 0.0667 - categorical_accuracy: 0.9821    Epoch 00029: loss did not improve
+1577/1577 [==============================] - 1s
+Accuracy: 96.83%
+
+
+Accuracy = 72.5%
+Accuracy = 145/200
+Progress = 200/6028
+
+Accuracy = 71.0%
+Accuracy = 284/400
+Progress = 400/6028
+
+Accuracy = 68.66666666666667%
+Accuracy = 412/600
+Progress = 600/6028
+
+Accuracy = 70.25%
+Accuracy = 562/800
+Progress = 800/6028
+
+Accuracy = 69.5%
+Accuracy = 695/1000
+Progress = 1000/6028
+
+Accuracy = 69.75%
+Accuracy = 837/1200
+Progress = 1200/6028
+
+Accuracy = 69.71428571428571%
+Accuracy = 976/1400
+Progress = 1400/6028
+
+Accuracy = 69.125%
+Accuracy = 1106/1600
+Progress = 1600/6028
+
+Accuracy = 69.05555555555556%
+Accuracy = 1243/1800
+Progress = 1800/6028
+
+Accuracy = 68.5%
+Accuracy = 1370/2000
+Progress = 2000/6028
+
+Accuracy = 68.77272727272727%
+Accuracy = 1513/2200
+Progress = 2200/6028
+
+Accuracy = 68.75%
+Accuracy = 1650/2400
+Progress = 2400/6028
+
+Accuracy = 68.38461538461539%
+Accuracy = 1778/2600
+Progress = 2600/6028
+
+Accuracy = 68.17857142857143%
+Accuracy = 1909/2800
+Progress = 2800/6028
+
+Accuracy = 68.1%
+Accuracy = 2043/3000
+Progress = 3000/6028
+
+Accuracy = 68.25%
+Accuracy = 2184/3200
+Progress = 3200/6028
+
+Accuracy = 68.17647058823529%
+Accuracy = 2318/3400
+Progress = 3400/6028
+
+Accuracy = 68.38888888888889%
+Accuracy = 2462/3600
+Progress = 3600/6028
+
+Accuracy = 68.44736842105263%
+Accuracy = 2601/3800
+Progress = 3800/6028
+
+Accuracy = 68.625%
+Accuracy = 2745/4000
+Progress = 4000/6028
+
+Accuracy = 68.80952380952381%
+Accuracy = 2890/4200
+Progress = 4200/6028
+
+Accuracy = 68.70454545454545%
+Accuracy = 3023/4400
+Progress = 4400/6028
+
+Accuracy = 68.8913043478261%
+Accuracy = 3169/4600
+Progress = 4600/6028
+
+Accuracy = 68.75%
+Accuracy = 3300/4800
+Progress = 4800/6028
+
+Accuracy = 68.92%
+Accuracy = 3446/5000
+Progress = 5000/6028
+
+Accuracy = 68.88461538461539%
+Accuracy = 3582/5200
+Progress = 5200/6028
+
+Accuracy = 68.66666666666667%
+Accuracy = 3708/5400
+Progress = 5400/6028
+
+Accuracy = 68.85714285714286%
+Accuracy = 3856/5600
+Progress = 5600/6028
+
+Accuracy = 69.0%
+Accuracy = 4002/5800
+Progress = 5800/6028
+
+Accuracy = 69.11666666666666%
+Accuracy = 4147/6000
+Progress = 6000/6028
+
+Accuracy = 69.16058394160584%
+Accuracy = 4169/6028
+Progress = 6028/6028

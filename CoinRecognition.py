@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 18 18:36:50 2017
+Created on Sat May 20 01:40:28 2017
 
 @author: Elad Dvash
 """
-
 
 import os
 import random
@@ -21,47 +19,30 @@ from keras.layers import Conv2D, MaxPooling2D,ZeroPadding2D
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
 from keras import metrics
+from keras.models import load_model
 
 def CreateCNN():
     model = keras.models.Sequential()
     
     # First Cluster
-    model.add(Conv2D(128, (5, 5), activation='relu', input_shape=(128, 128, 3), padding = 'same' ) )
-    model.add(Conv2D(128, (5, 5), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (5, 5), activation='relu', padding = 'same' ))
+    model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(128, 128, 3) ) )
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    
-    # Second Cluster
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    
-    # Third Cluster
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    
-    # Forth Cluster
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same' ))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    
-    # Fifth Cluster
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding = 'same' ))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(256, (3, 3), activation='relu'))
     
     model.add(Flatten())
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.25))
     model.add(Dense(128, activation='tanh'))
+    model.add(Dropout(0.25))
+    model.add(Dense(64, activation='tanh'))
     model.add(Dropout(0.25))
     model.add(Dense(5, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
@@ -86,6 +67,8 @@ def createSegmentedClassImages():
             plt.imsave('ClassificationData/'+path.split('_')[0] +'_'+str(CoinCounter) + '.jpg',image)
             #print (CoinCounter)
             CoinCounter += 1
+            if(CoinCounter%500 == 0 ):
+                print('Coins so far:'+str(CoinCounter))
     print('Done!\n')
 def createClassDataset():
     if(not 'ClassificationData' in os.listdir()):
@@ -98,16 +81,17 @@ def createClassDataset():
     
     for i,path in enumerate(SegmentedImages):
         Dataset[i,:,:,:] = scipy.ndimage.imread('ClassificationData/' + path, mode = 'RGB')
-        if(path.split('_')[0] == '5'):
+        if(int(path.split('_')[0]) == 5):
             Labels[i,0] = 1
-        elif(path.split('_')[0] == '10'):
+        elif(int(path.split('_')[0]) == 10):
             Labels[i,1] = 1
-        elif(path.split('_')[0] == '25'):
+        elif(int(path.split('_')[0]) == 25):
             Labels[i,2] = 1
-        elif(path.split('_')[0] == '50'):
+        elif(int(path.split('_')[0]) == 50):
             Labels[i,3] = 1
-        elif(path.split('_')[0] == '100'):
+        elif(int(path.split('_')[0]) == 100):
             Labels[i,4] = 1
+        
     print(Dataset.shape)
     train_x = Dataset[ :int( Dataset.shape[0] * 0.8) ,:,:,:]
     train_y = Labels[ :int( Dataset.shape[0] * 0.8) ,:]
@@ -133,42 +117,56 @@ def GetCoinValue(pos):
 def GetRegResults(saved_weights = ''):
     model = CreateCNN()
     if(saved_weights == ''):
-        model.load_weights("coins-weights-improvement-Last.h5")
+        model.load_weights("coins-weights-improvement-New.h5")
     else:
         model.load_weights(saved_weights)
+    
     RegImages = os.listdir(os.getcwd()+'/all_reg')
     FinalData = np.zeros((len(RegImages),2))
+    random.shuffle(RegImages)
     AccuracyCounter = 0
+    savingCounter = 0
     for i,path in enumerate(RegImages):
         temp_data = FeatureDetection.SegmentImage('all_reg/' + path)
         data = np.zeros((temp_data.shape[0],1,128,128,3))
         data[:,0,:,:,:]= temp_data[:,:,:,:]
         test_y = int(path.split('_')[0])
         sum = 0
-        for i in range(data.shape[0]):
-            predicted = model.predict(data[i], batch_size = 1)
+        savedPreds = np.zeros((data.shape[0])).astype(int)
+        for k in range(data.shape[0]):
+            predicted = model.predict(data[k], batch_size = 1)
             predicted = predicted.argmax()
             sum = sum + GetCoinValue(predicted)
-        print(sum == test_y)
+            savedPreds[k] = GetCoinValue(predicted)
+        #print(sum == test_y)
         FinalData[i] = [sum,test_y]
         if(FinalData[i][0] == FinalData[i][1]):
             AccuracyCounter = AccuracyCounter + 1
-        Accuracy =  AccuracyCounter/(len(RegImages)) *100
-        print('Accuracy = ' + str(Accuracy) +'%')
-        print('Accuracy = ' + str(AccuracyCounter) +'/' + str(len(RegImages)))
+            #for k,image in enumerate(temp_data):
+            #    plt.imsave('reg_data/'+str(savedPreds[k]) +'_a'+str(savingCounter)+'.jpg',image)
+            #    savingCounter = savingCounter + 1
+        if((i+1)%200 == 0 or i+1 == len(RegImages)):
+            print()
+            print('Accuracy = ' + str(100*AccuracyCounter/(i+1))+'%')
+            print('Accuracy = ' + str(AccuracyCounter) +'/' + str(i+1))
+            print('Progress = ' + str(i+1) +'/' + str(len(RegImages)))
+        np.save('Results.npy',FinalData)
 
-
-def RunClassifier():
+def RunClassifier(saved_weights = ''):
     createSegmentedClassImages()
     train_x,train_y,test_x,test_y = createClassDataset()
     filepath="coins-weights-improvement-New.h5"
     checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
     model = CreateCNN()
-    model.fit(train_x, train_y, epochs=20, batch_size=96, callbacks=callbacks_list)
+    if(not saved_weights == ''):
+        model.load_weights(saved_weights)
+    model.fit(train_x, train_y, epochs=30, batch_size=96, callbacks=callbacks_list)
     model.save_weights("coins-weights-improvement-Last.h5")
     scores = model.evaluate(test_x, test_y)
     print("Accuracy: %.2f%%" % (scores[1]*100))
+    GetRegResults()
 
-#RunClassifier()
-GetRegResults()
+
+#CreateCNN()
+RunClassifier()
